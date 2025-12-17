@@ -27,7 +27,8 @@ def main():
             print("\nChoose an option:")
             print("1. Assign new car")
             print("2. Release a car")
-            print("3. Exit")
+            print("3. View parked vehicles")
+            print("4. Exit")
 
             option = input("Enter your option: ").strip()
 
@@ -41,8 +42,10 @@ def main():
             elif option == "2":
                 spotid = input("Enter parking spot ID to release: ").strip()
                 parkinglot.release_spot(spotid)
-
             elif option == "3":
+                parkinglot.view_vehicles()
+
+            elif option == "4":
                 print("Exiting...")
                 break
 

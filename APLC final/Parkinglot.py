@@ -51,6 +51,17 @@ class ParkingLot:
 
         raise InvalidParkingSpotError(f"Spot {spot_id} not found.")
 
+    def view_vehicles(self):
+        if not self.parked_vehicles:
+            print("No vehicles are currently parked.")
+            return
+
+        print("\nCurrently parked vehicles:")
+        print(f"{'Plate':<10} {'Size':<10} {'Spot ID':<10}")
+        print("-" * 30)
+        for plate, spot in self.parked_vehicles.items():
+            print(f"{plate:<10} {spot.size:<10} {spot.spot_id:<10}")
+
     def load_vehicles_from_json(self):
         """Load initial vehicles from JSON for parked vehicles dict"""
         with open(self.json_file, "r") as file:

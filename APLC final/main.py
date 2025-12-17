@@ -1,4 +1,8 @@
+from Parkinglot import ParkingLot
+from Exceptions import ParkingError, InvalidVehicleError
 from Vehicle import Vehicle
+from Parkingspot import ParkingSpot
+import json
 
 def load_data(sampledata):
     with open(sampledata, "r") as file:
@@ -7,6 +11,16 @@ def load_data(sampledata):
 def main():
     try:
         data = load_data("sampledata.json")
+        spots = [
+            ParkingSpot(
+                spot["id"],
+                spot["size"],
+                spot["available"]
+            )
+            for spot in data["parkingSpots"]
+        ]
+        parkinglot = ParkingLot(spots, "sampledata.json")
+
 
         print("*******Parking system*******")
         while True:
@@ -22,7 +36,7 @@ def main():
                 size = input("Enter vehicle size (compact/large): ").strip().lower()
 
                 vehicle = Vehicle(plate, size)
-                parking_lot.assign_spot(vehicle)
+                parkinglot.assign_spot(vehicle)
 
             elif option == "2":
                 spotid = input("Enter parking spot ID to release: ").strip()
@@ -33,8 +47,9 @@ def main():
                 break
 
             else:
-                print("Invalid option. Tr again.")
-    except ParkingException as e:
+                print("Invalid option. Try again.")
+
+    except ParkingError as e:
         print(f"Parking error: {e}")
     except Exception as e:
         print(f"Error: {e}")
@@ -42,4 +57,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -1,29 +1,88 @@
-from Exceptions import invalidspoterror, parkingfullerror
+from Exceptions import SpotAlreadyOccupiedError, InvalidParkingSpotError
+from concurrent.futures import ThreadPoolExecutor
 import json
-from json import dumps
 
-file_path = 'APLC final\sampledata.json'
+class ParkingLot:
+    def __init__(self, spots: list, json_file: str):
+        self.spots = spots
+        self.parked_vehicles = {}  # Map plate -> spot
+        self.json_file = json_file
+        self.load_vehicles_from_json()
 
-# load json file
-try:
-    with open(file_path, 'r') as data:
-        data_dict = json.load(data)
+    def _check_spot(self, spot_vehicle_pair):
+        spot, vehicle = spot_vehicle_pair
+        if spot.available and (spot.size == vehicle.size or spot.size == "large"):
+            return spot
+        return None
 
-except FileNotFoundError:
-    print(f"File {file_path} doesn't exist")
+    def assign_spot(self, vehicle):
+        with ThreadPoolExecutor() as executor:
+            results = executor.map(
+                self._check_spot,
+                [(spot, vehicle) for spot in self.spots]
+            )
 
-# parse data to find available spots for each vehicle
-for vehicle in data_dict['vehicles']:
-    parked = False
+        for spot in results:
+            if spot:
+                spot.assign()
+                self.parked_vehicles[vehicle.plate] = spot
+                print(f"Vehicle {vehicle.plate} assigned to spot {spot.spot_id}")
+                self.save_to_json(vehicle, spot, assign=True)
+                return spot
 
-    for spot in data_dict['parkingSpots']:
-        if spot['available'] and vehicle['size'] == spot['size']:
-            
-            print(f"Spot {spot['id']} is available for {vehicle['plate']}")
-            
-            spot['available'] = False  
-            parked = True
-            break
+        raise SpotAlreadyOccupiedError("No suitable spots available.")
 
-    if not parked:
-        print(f"No available spot for vehicle {vehicle['plate']}")
+    def release_spot(self, spot_id: str):
+        for spot in self.spots:
+            if spot.spot_id == spot_id:
+                plate_to_remove = None
+                for plate, v_spot in list(self.parked_vehicles.items()):
+                    if v_spot.spot_id == spot_id:
+                        plate_to_remove = plate
+                        del self.parked_vehicles[plate]
+                        break
+
+                spot.release()  # Make sure Spot class has this method
+                print(f"Spot {spot_id} released")
+
+                if plate_to_remove:
+                    self.save_to_json(plate_to_remove, spot, assign=False)
+                return
+
+        raise InvalidParkingSpotError(f"Spot {spot_id} not found.")
+
+    def load_vehicles_from_json(self):
+        """Load initial vehicles from JSON for parked vehicles dict"""
+        with open(self.json_file, "r") as file:
+            data = json.load(file)
+
+        for vehicle_data in data.get("vehicles", []):
+            plate = vehicle_data["plate"]
+            size = vehicle_data["size"]
+            # Find assigned spot
+            for spot in self.spots:
+                if not spot.available and (spot.size == size or spot.size == "large"):
+                    self.parked_vehicles[plate] = spot
+                    break
+
+    def save_to_json(self, vehicle_or_plate, spot, assign=True):
+        """Update JSON file when a vehicle is assigned or released"""
+        with open(self.json_file, "r") as file:
+            data = json.load(file)
+
+        # Update spot availability
+        for s in data["parkingSpots"]:
+            if s["id"] == spot.spot_id:
+                s["available"] = assign
+
+        # Update vehicles list
+        if assign:
+            vehicle_dict = {"plate": vehicle_or_plate.plate, "size": vehicle_or_plate.size}
+            if vehicle_dict not in data.get("vehicles", []):
+                data.setdefault("vehicles", []).append(vehicle_dict)
+        else:
+            data["vehicles"] = [v for v in data.get("vehicles", []) if v["plate"] != vehicle_or_plate]
+
+        # Save back to JSON
+        with open(self.json_file, "w") as file:
+            json.dump(data, file, indent=2)

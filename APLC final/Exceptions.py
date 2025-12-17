@@ -1,18 +1,78 @@
-class parkingerror(Exception):
-    """Base class for parking-related exceptions."""
+from Vehicle import Vehicle
+from Parkinglot import ParkingLot
+
+# Exceptions
+
+class ParkingError(Exception):
+    """Base exception for parking system."""
     pass
+
+#The vehicle data is incorrect or incomplete
+class InvalidVehicleError(ParkingError):
+    pass
+
+#The parking spot data is invalid
+class InvalidParkingSpotError(ParkingError):
+    pass
+
+#No suitable parking spots are available
+class ParkingLotFullError(ParkingError):
+    pass
+
+#Someone tried to park a vehicle in a spot that’s already taken
+class SpotAlreadyOccupiedError(ParkingError):
+    pass
+
+#Someone tried to remove a vehicle from an empty spot
+class SpotNotOccupiedError(ParkingError):
+    pass
+
+
+class DisableParkingLot(ParkingError):
+    pass
+
+from Exceptions import (
+    ParkingError,
+    InvalidVehicleError,
+    InvalidParkingSpotError,
+    ParkingLotFullError,
+    SpotAlreadyOccupiedError,
+    SpotNotOccupiedError,
+    DisableParkingLot
+)
+
+try:
+    # Example actions that may fail
+    vehicle = Vehicle("ABC123", "medium")
+    spot = ParkingLot.assign_spot(vehicle)
+
+    # Force an error (assign again to same spot)
+    spot.assign_vehicle(vehicle)
+
+    # Force another error (release twice)
+    spot.release_vehicle()
+    spot.release_vehicle()
+
+except InvalidVehicleError:
+    print("Error: Vehicle data is invalid.")
+
+except InvalidParkingSpotError:
+    print("Error: Parking spot data is invalid.")
+
+except ParkingLotFullError:
+    print("Error: Parking lot is full. No spots available.")
+
+except SpotAlreadyOccupiedError:
+    print("Error: This parking spot is already occupied.")
+
+except SpotNotOccupiedError:
+    print("Error: Cannot release an empty parking spot.")
     
-class invalidvehicleerror(parkingerror):
+except DisableParkingLot:
+    print("Error: Cannot park in this spot.")
 
-    """Exception raised for invalid vehicle types."""
-    pass
+except ParkingError:
+    print("Error: A general parking system error occurred.")
 
-class invalidspoterror(parkingerror):
-    """Exception raised for invalid spot types."""
-    pass
-
-class parkingfullerror(parkingerror):
-    """Exception raised when the parking lot is full."""
-    pass
-
-
+except Exception as e:
+    print("Unexpected error:", e)

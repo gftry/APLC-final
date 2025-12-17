@@ -1,6 +1,3 @@
-from Vehicle import Vehicle
-from Parkinglot import ParkingLot
-
 # Exceptions
 
 class ParkingError(Exception):

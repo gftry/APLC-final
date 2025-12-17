@@ -86,3 +86,4 @@ class ParkingLot:
         # Save back to JSON
         with open(self.json_file, "w") as file:
             json.dump(data, file, indent=2)
+

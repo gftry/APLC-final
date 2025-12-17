@@ -1,64 +1,18 @@
 {
-  "parkingSpots": [
-    {
-      "id": "P1",
-      "size": "compact",
-      "available": true
-    },
-    {
-      "id": "P2",
-      "size": "large",
-      "available": true
-    },
-    {
-      "id": "P3",
-      "size": "compact",
-      "available": false
-    },
-    {
-      "id": "P4",
-      "size": "large",
-      "available": false
-    },
-    {
-      "id": "P5",
-      "size": "large",
-      "available": true
-    },
-    {
-      "id": "P6",
-      "size": "compact",
-      "available": false
-    }
-  ],
-  "vehicles": [
-    {
-      "plate": "ABC123",
-      "size": "compact"
-    },
-    {
-      "plate": "XYZ789",
-      "size": "large"
-    },
-    {
-      "plate": "TJB128",
-      "size": "large"
-    },
-    {
-      "plate": "MOR109",
-      "size": "large"
-    },
-    {
-      "plate": "PIK462",
-      "size": "compact"
-    },
-    {
-      "plate": "HEL110",
-      "size": "compact"
-    },
-    {
-      "plate": "EFG301",
-      "size": "large"
-    }
-  ]
+ "parkingSpots": [
+ {"id": "P1", "size": "compact", "available": true},
+ {"id": "P2", "size": "large", "available": true},
+ {"id": "P3", "size": "compact", "available": false},
+ {"id": "P4", "size": "large", "available": false},
+ {"id": "P5", "size": "large", "available": true},
+ {"id": "P6", "size": "compact", "available": true}
+ ],
+ "vehicles": [
+ {"plate": "ABC123", "size": "compact"},
+ {"plate": "XYZ789", "size": "large"},
+ {"plate": "TJB128", "size": "large"},
+ {"plate": "MOR109", "size": "large"},
+ {"plate": "PIK462", "size": "compact"},
+ {"plate": "HEL110", "size": "compact"}
+ ]
 }

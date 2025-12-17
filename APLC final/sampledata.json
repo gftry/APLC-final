@@ -5,7 +5,7 @@
  {"id": "P3", "size": "compact", "available": false},
  {"id": "P4", "size": "large", "available": false},
  {"id": "P5", "size": "large", "available": true},
- {"id": "P6", "size": "compact", "available": false}
+ {"id": "P6", "size": "compact", "available": true}
  ],
  "vehicles": [
  {"plate": "ABC123", "size": "compact"},

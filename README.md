@@ -8,4 +8,4 @@ The language we used is python because of the syntax and the ease of use
  And main will tie it all together
  For our parallelzation the program will check for spot data and see if the spots are availible for the type of vechicle
  For exceptions the program will check for invalid vehicle and invalid spots
-To run the project type phython main.py
+To run the project type python main.py
